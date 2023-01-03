@@ -12,7 +12,7 @@ class Sigmoid(ActivationFunction):
            Activation function output.
            DONE: Change the function to return the correct value, given input `x`.
         """
-        return 1/(1+np.exp(-1*x))
+        return 1 / (1 + np.exp(-1 * x))
 
     def gradient(self, x):
         """
@@ -20,7 +20,7 @@ class Sigmoid(ActivationFunction):
            DONE: Change the function to return the correct value, given input `x`.
         """
         a = self.forward(x)
-        return a*(1-a)
+        return a * (1 - a)
 
 
 class LinearActivation(ActivationFunction):
@@ -48,6 +48,8 @@ class Layer:
            Initialize the layer, creating `num_units` perceptrons with `num_inputs` each.
         """
         # DONE Create the perceptrons required for the layer
+
+        self.num_units = num_units
         self.ps = [Perceptron(num_inputs, act_f) for _ in range(num_units)]
 
     def activation(self, x):
@@ -72,7 +74,7 @@ class Layer:
         Input size: (n_inputs+1, n_units)
         """
         for i in range(self.num_units):
-            self.ps[i].w += dw[:,i]
+            self.ps[i].w += dw[:, i]
 
     @property
     def w(self):
@@ -88,7 +90,7 @@ class Layer:
            Input size: (n_inputs+1, n_units)
         """
         for i in range(self.num_units):
-            self.ps[i].w = w[:,i]
+            self.ps[i].w = w[:, i]
 
 
 class MLP:
