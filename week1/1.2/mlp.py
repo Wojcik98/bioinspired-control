@@ -46,7 +46,7 @@ class Layer:
          Initialize the layer, creating `num_units` perceptrons with `num_inputs` each. 
       """
       # TODO Create the perceptrons required for the layer
-      self.ps = []
+      self.ps = [Perceptron(num_inputs, act_f)]*num_units
 
    def activation(self, x):
       """ Returns the activation `a` of all perceptrons in the layer, given the input vector`x`. """
@@ -181,6 +181,11 @@ if __name__ == "__main__":
    print("Linear'(2) = {}".format(fn_linear.gradient(2)))
 
    # TODO: Test Layer class init
+   l = Layer(2, 5, LinearActivation)
+   print("Layer test:")
+   print("Prediction to [pi, 1] = {}".format(l.predict([np.pi, 1])))
+   print("Weights = {}".format(l.w))
+
 
 
    # TODO: Test MLP class init
