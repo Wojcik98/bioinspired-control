@@ -12,14 +12,15 @@ class Sigmoid(ActivationFunction):
          Activation function output.
          TODO: Change the function to return the correct value, given input `x`.
       """
-      return None
+      return 1/(1+np.exp(-1*x))
 
    def gradient(self, x):
       """
          Activation function derivative.
          TODO: Change the function to return the correct value, given input `x`.
       """
-      return None
+      a = self.forward(x)
+      return a*(1-a)
 
 class LinearActivation(ActivationFunction):
    """ 
@@ -30,14 +31,14 @@ class LinearActivation(ActivationFunction):
          Activation function output.
          TODO: Change the function to return the correct value, given input `x`.
       """
-      return None
+      return x
 
    def gradient(self, x):
       """
          Activation function derivative.
          TODO: Change the function to return the correct value, given input `x`.
       """
-      return None
+      return 1
 
 class Layer:
    def __init__(self, num_inputs, num_units, act_f):
