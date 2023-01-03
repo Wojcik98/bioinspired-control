@@ -4,12 +4,40 @@ import cv2
 import datetime
 from FableAPI.fable_init import api
 from utils import initialize_camera, initialize_robot
+import csv
+
 
 cam = ct.prepare_camera()
 print(cam.isOpened())
 print(cam.read())
 
 i = 0
+
+# Initialization of the camera. Wait for sensible stuff
+def initialize_camera(cam):
+    while True:
+        frame = ct.capture_image(cam)
+
+        x, _ = ct.locate(frame)
+
+        if x is not None:
+            break     
+
+def initialize_robot(module=None):
+    api.setup(blocking=True)
+    # Find all the robots and return their IDs
+    print('Search for modules')
+    moduleids = api.discoverModules()
+
+    if module is None:
+        module = moduleids[0]
+    print('Found modules: ',moduleids)
+    api.setPos(0,0, module)
+    api.sleep(0.5)
+    print(api.getPos('X', module))
+    print(api.getPos('Y', module))
+    return module
+
 
 initialize_camera(cam)
 module = initialize_robot()
@@ -29,7 +57,7 @@ t2 = np.repeat(np.linspace(0, 86, n_t2), n_t1)  # repeat each element
 thetas = np.stack((t1, t2))
 
 num_datapoints = n_t1*n_t2
-
+  
 api.setPos(thetas[0, i], thetas[1, i], module)
 
 class TestClass:
@@ -38,6 +66,10 @@ class TestClass:
         self.num_datapoints = num_datapoints
         self.data = np.zeros((num_datapoints, 4))
         self.time_of_move = datetime.datetime.now()
+
+        with open('robot_pos.csv', 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["robot_pos_x", "robot_pos_y", "img_pos_x", "img_pos_y"])
 
     def go(self):
         if self.i >= num_datapoints:
@@ -59,15 +91,25 @@ class TestClass:
                     self.time_of_move = datetime.datetime.now()
             else:
                 print("Obj not found")
-                
+        
         return False
-
+    
+    '''def write_csv(self):
+        with open('robot_pos.csv', 'a', newline='') as self.file:
+            self.writer.writerows(self.data)'''
 
 test = TestClass(num_datapoints)
-test.go()    
 
+while True:
+    if test.go():
+        break
 
 print('Terminating')
 api.terminate()
 
-# TODO SAVE .csv file with robot pos data and target location x,y
+# DONE SAVE .csv file with robot pos data and target location x,y
+
+with open('robot_pos.csv', 'a', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerows(test.data)
+print("file written")
