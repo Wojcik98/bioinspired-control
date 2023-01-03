@@ -10,17 +10,18 @@ class Sigmoid(ActivationFunction):
     def forward(self, x):
         """
            Activation function output.
-           TODO: Change the function to return the correct value, given input `x`.
+           DONE: Change the function to return the correct value, given input `x`.
         """
         return 1/(1+np.exp(-1*x))
 
     def gradient(self, x):
         """
            Activation function derivative.
-           TODO: Change the function to return the correct value, given input `x`.
+           DONE: Change the function to return the correct value, given input `x`.
         """
         a = self.forward(x)
         return a*(1-a)
+
 
 class LinearActivation(ActivationFunction):
     """
@@ -39,6 +40,7 @@ class LinearActivation(ActivationFunction):
            TODO: Change the function to return the correct value, given input `x`.
         """
         return 1
+
 
 class Layer:
     def __init__(self, num_inputs, num_units, act_f):
@@ -87,6 +89,7 @@ class Layer:
         """
         for i in range(self.num_units):
             self.ps[i].w = w[:,i]
+
 
 class MLP:
     """
@@ -165,10 +168,12 @@ class MLP:
         else:
             print("Sizes do not match")
 
+
 def calc_prediction_error(model, x, t):
     """ Calculate the average prediction error """
     # TODO Write the function
     return None
+
 
 if __name__ == "__main__":
     # TODO: Test new activation functions

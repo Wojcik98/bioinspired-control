@@ -10,7 +10,7 @@ class SignActivation(ActivationFunction):
     def forward(self, x):
         """
            This is the output function.
-           TODO: Define the correct return function, given input `x`
+           DONE: Define the correct return function, given input `x`
         """
         return 1.0 if x > 0 else 0.0
 
@@ -35,7 +35,7 @@ class Perceptron:
     def __init__(self, n_inputs, act_f):
         """
            Perceptron class initialization
-           TODO: Write the code to initialize weights and save the given activation function
+           DONE: Write the code to initialize weights and save the given activation function
         """
         if not isinstance(act_f, type) or not issubclass(act_f, ActivationFunction):
             raise TypeError('act_f has to be a subclass of ActivationFunction (not a class instance).')
@@ -51,7 +51,7 @@ class Perceptron:
     def activation(self, x):
         """
            It computes the activation `a` given an input `x`
-           TODO: Fill in the function to provide the correct output
+           DONE: Fill in the function to provide the correct output
            NB: Remember the bias
         """
         a = np.dot(np.append(x, [1]), self.w)
@@ -60,7 +60,7 @@ class Perceptron:
     def output(self, a):
         """
            It computes the neuron output `y`, given the activation `a`
-           TODO: Fill in the function to provide the correct output
+           DONE: Fill in the function to provide the correct output
         """
         y = self.f.forward(a)
         return y
@@ -68,7 +68,7 @@ class Perceptron:
     def predict(self, x):
         """
            It computes the neuron output `y`, given the input `x`
-           TODO: Fill in the function to provide the correct output
+           DONE: Fill in the function to provide the correct output
         """
         return self.output(self.activation(x))
 
@@ -93,16 +93,16 @@ if __name__ == '__main__':
     print(xdata)
     print(ydata)
 
-    # TODO Test your activation function
+    # DONE Test your activation function
     a = SignActivation()
     print(a.forward(2))
     "print(a.forward(0))"
 
-    # TODO Test perceptron initialization
+    # DONE Test perceptron initialization
     p = Perceptron(2, SignActivation)
     print(p.predict(xdata[0, :]))
 
-    # TODO Learn the weights
+    # DONE Learn the weights
     r = 0.001     # learning rate
     # calculate the error and update the weights
     epochs = 1000
@@ -115,7 +115,7 @@ if __name__ == '__main__':
             p.w += r * (y_target - y_pred) * np.append(x, [1])
 
     print(p.w)
-    # TODO plot points and linear decision boundary
+    # DONE plot points and linear decision boundary
 
     y_preds = np.array([p.predict(x) for x in xdata])
     print(ydata)
@@ -136,4 +136,3 @@ if __name__ == '__main__':
     plt.xlabel('x1')
     plt.ylabel('x2')
     plt.show()
-
