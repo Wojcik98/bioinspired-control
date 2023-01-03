@@ -175,8 +175,10 @@ if __name__ == "__main__":
    print("Activation function test: ")
    fn_sigmoid = Sigmoid()
    print("Sigmoid(2) = {}".format(fn_sigmoid.forward(2)))
+   print("Sigmoid'(2) = {}".format(fn_sigmoid.gradient(2)))
    fn_linear = LinearActivation()
    print("Linear(2) = {}".format(fn_linear.forward(2)))
+   print("Linear'(2) = {}".format(fn_linear.gradient(2)))
 
    # TODO: Test Layer class init
 
