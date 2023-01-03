@@ -173,8 +173,13 @@ class MLP:
 
 def calc_prediction_error(model, x, t):
     """ Calculate the average prediction error """
-    # TODO Write the function
-    return None
+    # DONE: Write the function
+    loss = 0
+    for inp in x:
+        prediction = model.predict(inp)
+        for dim in range(len(prediction)):
+            loss += (prediction[dim] - t[dim]) ** 2
+    return loss / len(x)
 
 
 if __name__ == "__main__":
@@ -200,6 +205,10 @@ if __name__ == "__main__":
     print("MLP test:")
     print("Prediction to [pi, 1] = {}".format(m.predict([np.pi, 1])))
     print("Weights = {}".format(m.export_weights()))
+
+    example_x = [[1, 1], [2, 2], [3, 3]]
+    example_t = [[1], [2], [3]]
+    print("Test loss function = {}".format(calc_prediction_error(m, example_x, example_t)))
 
 
     # TODO: Training data
