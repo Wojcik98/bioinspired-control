@@ -30,14 +30,14 @@ class LinearActivation(ActivationFunction):
     def forward(self, x):
         """
            Activation function output.
-           TODO: Change the function to return the correct value, given input `x`.
+           DONE: Change the function to return the correct value, given input `x`.
         """
         return x
 
     def gradient(self, x):
         """
            Activation function derivative.
-           TODO: Change the function to return the correct value, given input `x`.
+           DONE: Change the function to return the correct value, given input `x`.
         """
         return 1
 
@@ -47,8 +47,8 @@ class Layer:
         """
            Initialize the layer, creating `num_units` perceptrons with `num_inputs` each.
         """
-        # TODO Create the perceptrons required for the layer
-        self.ps = [Perceptron(num_inputs, act_f)]*num_units
+        # DONE Create the perceptrons required for the layer
+        self.ps = [Perceptron(num_inputs, act_f) for _ in range(num_units)]
 
     def activation(self, x):
         """ Returns the activation `a` of all perceptrons in the layer, given the input vector`x`. """
@@ -113,16 +113,18 @@ class MLP:
 
         self.alpha = alpha
 
-        # TODO: Define a hidden layer and the output layer
-        self.l1 = None # hidden layer 1
-        self.l_out = None # output layer
+        # DONE: Define a hidden layer and the output layer
+        self.l1 = Layer(num_inputs, n_hidden_units, Sigmoid) # hidden layer 1
+        self.l_out = Layer(n_hidden_units, n_outputs, LinearActivation) # output layer
 
     def predict(self, x):
         """
         Forward pass prediction given the input x
-        TODO: Write the function
+        DONE: Write the function
         """
-        return None
+        y = self.l1.predict(x)
+        y = self.l_out.predict(y)
+        return y
 
     def train(self, inputs, outputs):
         """
@@ -158,13 +160,13 @@ class MLP:
         return None # remove this line
 
     def export_weights(self):
-        return [self.l1.w, self.l2.w]
+        return [self.l1.w, self.l_out.w]
 
     def import_weights(self, ws):
-        if ws[0].shape == (self.l1.n_units, self.n_inputs+1) and ws[1].shape == (self.l2.n_units, self.l1.n_units+1):
+        if ws[0].shape == (self.l1.n_units, self.n_inputs+1) and ws[1].shape == (self.l_out.n_units, self.l1.n_units+1):
             print("Importing weights..")
             self.l1.import_weights(ws[0])
-            self.l2.import_weights(ws[1])
+            self.l_out.import_weights(ws[1])
         else:
             print("Sizes do not match")
 
@@ -176,7 +178,7 @@ def calc_prediction_error(model, x, t):
 
 
 if __name__ == "__main__":
-    # TODO: Test new activation functions
+    # DONE: Test new activation functions
     print("Activation function test: ")
     fn_sigmoid = Sigmoid()
     print("Sigmoid(2) = {}".format(fn_sigmoid.forward(2)))
@@ -185,7 +187,7 @@ if __name__ == "__main__":
     print("Linear(2) = {}".format(fn_linear.forward(2)))
     print("Linear'(2) = {}".format(fn_linear.gradient(2)))
 
-    # TODO: Test Layer class init
+    # DONE: Test Layer class init
     l = Layer(2, 5, LinearActivation)
     print("Layer test:")
     print("Prediction to [pi, 1] = {}".format(l.predict([np.pi, 1])))
@@ -193,7 +195,11 @@ if __name__ == "__main__":
 
 
 
-    # TODO: Test MLP class init
+    # DONE: Test MLP class init
+    m = MLP(2, 2, 1)
+    print("MLP test:")
+    print("Prediction to [pi, 1] = {}".format(m.predict([np.pi, 1])))
+    print("Weights = {}".format(m.export_weights()))
 
 
     # TODO: Training data
