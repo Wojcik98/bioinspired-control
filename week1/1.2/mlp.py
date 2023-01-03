@@ -172,7 +172,11 @@ def calc_prediction_error(model, x, t):
 
 if __name__ == "__main__":
    # TODO: Test new activation functions
-
+   print("Activation function test: ")
+   fn_sigmoid = Sigmoid()
+   print("Sigmoid(2) = {}".format(fn_sigmoid.forward(2)))
+   fn_linear = LinearActivation()
+   print("Linear(2) = {}".format(fn_linear.forward(2)))
 
    # TODO: Test Layer class init
 
