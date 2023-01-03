@@ -203,20 +203,23 @@ if __name__ == "__main__":
 
 
     # DONE: Test MLP class init
-    m = MLP(2, 2, 1)
+    m = MLP(2, 3, 1)
     print("MLP test:")
     print("Prediction to [pi, 1] = {}".format(m.predict([np.pi, 1])))
     print("Weights = {}".format(m.export_weights()))
 
-    example_x = [[1, 1], [2, 2], [3, 3]]
-    example_t = [[1], [2], [3]]
+    example_x = np.array([[1, 1], [2, 2], [3, 3]])
+    example_t = np.array([[1], [2], [3]])
     print("Test loss function = {}".format(calc_prediction_error(m, example_x, example_t)))
 
 
-    # TODO: Training data
+    # DONE: Training data
+    x = np.array([[0, 0], [1, 0], [0, 1], [1, 1]])
+    t = np.array([[0], [1], [1], [0]])
 
 
-    # TODO: Initialization
+    # DONE: Initialization
+    model = MLP(2, 2, 1)
 
 
     # TODO: Write a for loop to train the network for a number of iterations. Make plots.
