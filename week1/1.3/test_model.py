@@ -25,7 +25,7 @@ api.setAccurate(accurateX, accurateY, module)
 
 # TODO Load the trained model
 model = torch_model.MLPNet(2, 16, 2)
-# model.load_state_dict(torch.load('model_file_path'))
+model.load_state_dict(torch.load('trained_model.pth'))
 
 
 # dummy class for targets
