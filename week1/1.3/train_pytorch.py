@@ -10,8 +10,8 @@ from tqdm import tqdm # progress bar
 data = pickle.load( open( "training_data.p", "rb" ) )
 
 print(data.shape)
-angles = data[:,:2].T
-end_pos = data[:,2:].T
+angles = data[:, :2].T
+end_pos = data[:, 2:].T
 
 # Use GPU?
 device = 'cpu'
@@ -32,13 +32,13 @@ if device == 'cuda':
 # Define neural network - an example
 model = torch_model.MLPNet(2, 16, 2)
 # model = torch_model.Net(n_feature=2, n_hidden1=h, n_hidden2=h, n_output=2)
-#print(model)
+# print(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 loss_func = torch.nn.MSELoss()
 num_epochs = 500000
 
-#h = 16
-#g = 0.999
+# h = 16
+# g = 0.999
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=g)
 
 l_vec = np.zeros(num_epochs)

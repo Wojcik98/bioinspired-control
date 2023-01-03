@@ -4,34 +4,11 @@ import torch_model
 import cv2
 import camera_tools as ct
 from FableAPI.fable_init import api
+from utils import initialize_camera, initialize_robot
 
 cam = ct.prepare_camera()
 print(cam.isOpened())  # False
 i = 0
-
-# Initialize the camera first.. waits for it to detect the green block
-def initialize_camera(cam):
-    while True:
-        frame = ct.capture_image(cam)
-        x, _ = ct.locate(frame)
-
-        if x is not None:
-            break
-
-# Initialize the robot module
-def initialize_robot(module=None):
-    api.setup(blocking=True)
-    # Find all the robots and return their IDs.
-    print('Search for modules')
-    moduleids = api.discoverModules()
-
-    if module is None:
-        module = moduleids[0]
-    print('Found modules: ',moduleids)
-    api.setPos(0,0, module)
-    api.sleep(0.5)
-
-    return module
 
 initialize_camera(cam)
 module = initialize_robot()
@@ -48,7 +25,8 @@ api.setAccurate(accurateX, accurateY, module)
 
 # TODO Load the trained model
 model = torch_model.MLPNet(2, 16, 2)
-#model.load_state_dict(torch.load('model_file_path'))
+# model.load_state_dict(torch.load('model_file_path'))
+
 
 # dummy class for targets
 class CoordinateStore:
@@ -56,11 +34,11 @@ class CoordinateStore:
         self.point = None
         self.new = False
 
-    def select_point(self,event,x,y,flags,param):
-            if event == cv2.EVENT_LBUTTONDBLCLK:
-                cv2.circle(frame,(x,y),3,(255,0,0),-1)
-                self.point = [x,y]
-                self.new = True
+    def select_point(self, event, x, y, flags, param):
+        if event == cv2.EVENT_LBUTTONDBLCLK:
+            cv2.circle(frame, (x, y), 3, (255, 0, 0), -1)
+            self.point = [x, y]
+            self.new = True
 
 
 # Instantiate class
@@ -72,7 +50,6 @@ cv2.namedWindow("test")
 cv2.setMouseCallback('test', coordinateStore1.select_point)
 
 while True:
-
     frame = ct.capture_image(cam)
 
     x, y = ct.locate(frame)
@@ -95,4 +72,3 @@ while True:
 
 print('Terminating')
 api.terminate()
-
