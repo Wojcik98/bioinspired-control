@@ -7,19 +7,22 @@ import torch_model
 from tqdm import tqdm  # progress bar
 
 # Load data
-# data = pickle.load(open("training_data.p", "rb"))
-data = np.array([
-    [0.5, 0.5, 0, 0.5],
-    [1.0, 0, 0, 0.5],
-    [2.0, 3.0, 0, 0.5],
-    [0, 1.0, 1, 0.5],
-    [0, 2.0, 1, 0.5],
-    [1.0, 2.2, 1, 0.5]
-])
+data = pickle.load(open("training_data.p", "rb"))
+print(data)
+# data = np.array([
+#     [0.5, 0.5, 0, 0.5],
+#     [1.0, 0, 0, 0.5],
+#     [2.0, 3.0, 0, 0.5],
+#     [0, 1.0, 1, 0.5],
+#     [0, 2.0, 1, 0.5],
+#     [1.0, 2.2, 1, 0.5]
+# ])
 
 print(data.shape)
 angles = data[:, :2]
+angles /= 90.0
 end_pos = data[:, 2:]
+end_pos = (end_pos - 200) / 200
 
 # Use GPU?
 device = 'cpu'
@@ -30,6 +33,7 @@ if torch.cuda.is_available():
 
 x = torch.from_numpy(end_pos).float()
 y = torch.from_numpy(angles).float()
+print(y)
 # DONE split the training set and test set
 print(len(x.cpu()))
 train, test = torch.utils.data.random_split(range(len(x)), [0.8, 0.2])
@@ -42,15 +46,15 @@ if device == 'cuda':
     y = y.cuda()
 
 # Define neural network - an example
-model = torch_model.MLPNet(2, 100, 2)
+model = torch_model.MLPNet(2, 30, 2)
 # model = torch_model.Net(n_feature=2, n_hidden1=h, n_hidden2=h, n_output=2)
 # print(model)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 loss_func = torch.nn.MSELoss()
 num_epochs = 500
 
 # h = 16
-g = 0.99
+g = 0.8
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=g)
 
 l_vec = np.zeros(num_epochs)

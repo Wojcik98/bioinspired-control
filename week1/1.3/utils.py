@@ -18,11 +18,13 @@ def initialize_robot(module=None):
     api.setup(blocking=True)
     # Find all the robots and return their IDs
     print('Search for modules')
-    module_ids = api.discoverModules()
+    moduleids = api.discoverModules()
 
     if module is None:
-        module = module_ids[0]
-    print('Found modules: ', module_ids)
+        module = moduleids[0]
+    print('Found modules: ', moduleids)
     api.setPos(0, 0, module)
     api.sleep(0.5)
+    print(api.getPos('X', module))
+    print(api.getPos('Y', module))
     return module
