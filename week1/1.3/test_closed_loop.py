@@ -42,7 +42,7 @@ class CoordinateStore:
             self.new = True
 
 
-t = [api.getPos('X', module), api.getPos('Y', module)]
+t = [40, 40]
 
 # Instantiate class
 coordinateStore1 = CoordinateStore()
@@ -51,6 +51,10 @@ coordinateStore1 = CoordinateStore()
 
 cv2.namedWindow("test")
 cv2.setMouseCallback('test', coordinateStore1.select_point)
+
+with torch.no_grad():
+    inp = torch.tensor([[0, 0]])
+model.eval()
 
 while True:
     frame = ct.capture_image(cam)
@@ -69,26 +73,28 @@ while True:
             inp = torch.tensor([coordinateStore1.point]).float()
             inp = (inp - 200) / 200
 
-            for i in range(6):
-                frame = ct.capture_image(cam)
-                cv2.imshow("test", frame)
-                cv2.waitKey(1)
-                xy = ct.locate(frame)
-                current_xy = torch.tensor([xy]).float()
-                current_xy = (current_xy - 200) / 200
-                m_input = torch.tensor([np.append(inp - current_xy, np.divide(t,90))]).float()
-                print(m_input)
-                outp = model(m_input) * 90
-                dt = outp.numpy()[0]
-                print(dt)
-                t = [t[0] + dt[0], t[1] + dt[1]]
-                api.setPos(t[0], t[1], module)
-                sleep(2)
-                while api.getMoving('X', module) and api.getMoving('Y', module):
-                    sleep(0.1)
-
         coordinateStore1.new = False
 
+    # frame = ct.capture_image(cam)
+    # cv2.imshow("test", frame)
+    # cv2.waitKey(1)
+    xy = ct.locate(frame)
+    if xy[0] is not None:
+        print(xy)
+        current_xy = torch.tensor([xy]).float()
+        current_xy = (current_xy - 200) / 200
+        with torch.no_grad():
+            m_input = torch.tensor([np.append(inp - current_xy, np.divide(t, 90))]).float()
+            print(m_input)
+            outp = model(m_input)
+            dt = outp.numpy()[0]
+        print(dt)
+        t = [t[0] + dt[0], t[1] + dt[1]]
+        print(t)
+        api.setPos(t[0], t[1], module)
+    # sleep(2)
+    # while api.getMoving('X', module) and api.getMoving('Y', module):
+    #     sleep(0.1)
     # sleep(1.5)
 
 print('Terminating')

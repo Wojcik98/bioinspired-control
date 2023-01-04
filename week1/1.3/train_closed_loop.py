@@ -20,9 +20,12 @@ inp = np.array([[0, 0, 0, 0]])
 for i, angle in enumerate(angles):
     for j, angle2 in enumerate(angles):
         if i!=j:
-            angles_diff = np.concatenate((angles_diff, [angle - angle2]))
-            inp = np.concatenate((inp, [np.concatenate((end_pos[i] - end_pos[j], angle))]))
-
+            angles_diff = np.concatenate((angles_diff, [angle2 - angle]))
+            inp = np.concatenate((inp, [np.concatenate((end_pos[j] - end_pos[i], angle))]))
+inp = inp[1:, :]
+angles_diff = angles_diff[1:, :]
+print(inp)
+print(angles_diff)
 print("Training set generated")
 # Use GPU?
 device = 'cpu'
@@ -34,6 +37,9 @@ if torch.cuda.is_available():
 x = torch.from_numpy(inp).float()
 y = torch.from_numpy(angles_diff).float()
 print(y)
+if device == 'cuda':
+    x = x.cuda()
+    y = y.cuda()
 # DONE split the training set and test set
 print(len(x.cpu()))
 train, test = torch.utils.data.random_split(range(len(x)), [0.8, 0.2])
@@ -41,12 +47,9 @@ x_train, y_train = x[train.indices], y[train.indices]
 x_test, y_test = x[test.indices], y[test.indices]
 # Eventually normalize the data
 
-if device == 'cuda':
-    x = x.cuda()
-    y = y.cuda()
-
 # Define neural network - an example
 model = torch_model.MLPNet(4, 30, 2)
+model.to(device)
 # model = torch_model.Net(n_feature=2, n_hidden1=h, n_hidden2=h, n_output=2)
 # print(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
