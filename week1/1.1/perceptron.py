@@ -96,7 +96,7 @@ if __name__ == '__main__':
     # DONE Test your activation function
     a = SignActivation()
     print(a.forward(2))
-    "print(a.forward(0))"
+    print(a.forward(0))
 
     # DONE Test perceptron initialization
     p = Perceptron(2, SignActivation)
