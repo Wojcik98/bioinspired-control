@@ -5,6 +5,7 @@ import cv2
 import camera_tools as ct
 from FableAPI.fable_init import api
 from utils import initialize_camera, initialize_robot
+from time import sleep
 
 cam = ct.prepare_camera()
 print(cam.isOpened())  # False
@@ -24,7 +25,7 @@ accurateY = 'HIGH'
 api.setAccurate(accurateX, accurateY, module)
 
 # TODO Load the trained model
-model = torch_model.MLPNet(2, 16, 2)
+model = torch_model.MLPNet(2, 100, 2)
 model.load_state_dict(torch.load('trained_model.pth'))
 
 
@@ -62,13 +63,19 @@ while True:
     print(coordinateStore1.point)
     # get the prediction
     if coordinateStore1.new:
+        print('NEW POINT!!!')
         with torch.no_grad():
             inp = torch.tensor([coordinateStore1.point]).float()
-            outp = model(inp)
+            print(inp)
+            inp = (inp - 200) / 200
+            outp = model(inp) * 90
+            print(f'predicted output: {outp}')
             t = outp.numpy()[0]
             print(t)
         api.setPos(t[0], t[1], module)
         coordinateStore1.new = False
+
+    sleep(1.5)
 
 print('Terminating')
 api.terminate()

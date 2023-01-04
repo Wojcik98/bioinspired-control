@@ -3,8 +3,9 @@ import camera_tools as ct
 import cv2
 import datetime
 from FableAPI.fable_init import api
-from utils import initialize_camera, initialize_robot
 import csv
+import pickle
+from utils import initialize_camera, initialize_robot
 
 
 cam = ct.prepare_camera()
@@ -12,32 +13,6 @@ print(cam.isOpened())
 print(cam.read())
 
 i = 0
-
-# Initialization of the camera. Wait for sensible stuff
-def initialize_camera(cam):
-    while True:
-        frame = ct.capture_image(cam)
-
-        x, _ = ct.locate(frame)
-
-        if x is not None:
-            break     
-
-def initialize_robot(module=None):
-    api.setup(blocking=True)
-    # Find all the robots and return their IDs
-    print('Search for modules')
-    moduleids = api.discoverModules()
-
-    if module is None:
-        module = moduleids[0]
-    print('Found modules: ',moduleids)
-    api.setPos(0,0, module)
-    api.sleep(0.5)
-    print(api.getPos('X', module))
-    print(api.getPos('Y', module))
-    return module
-
 
 initialize_camera(cam)
 module = initialize_robot()
@@ -52,13 +27,14 @@ module = initialize_robot()
 n_t1 = 10
 n_t2 = 10
 
-t1 = np.tile(np.linspace(-85, 86, n_t1), n_t2)  # repeat the vector
-t2 = np.repeat(np.linspace(0, 86, n_t2), n_t1)  # repeat each element
+t1 = np.tile(np.linspace(-86, 0, n_t1), n_t2)  # repeat the vector
+t2 = np.repeat(np.linspace(-86, 86, n_t2), n_t1)  # repeat each element
 thetas = np.stack((t1, t2))
 
-num_datapoints = n_t1*n_t2
+num_datapoints = n_t1 * n_t2
   
 api.setPos(thetas[0, i], thetas[1, i], module)
+
 
 class TestClass:
     def __init__(self, num_datapoints):
@@ -77,7 +53,7 @@ class TestClass:
         
         img = ct.capture_image(cam)
         x, y = ct.locate(img)
-        if (datetime.datetime.now() - self.time_of_move).total_seconds() > 2.0:
+        if (datetime.datetime.now() - self.time_of_move).total_seconds() > 0.5:
             if x is not None:
                 print(x, y)
                 tmeas1 = api.getPos(0, module)
@@ -98,6 +74,7 @@ class TestClass:
         with open('robot_pos.csv', 'a', newline='') as self.file:
             self.writer.writerows(self.data)'''
 
+
 test = TestClass(num_datapoints)
 
 while True:
@@ -113,3 +90,6 @@ with open('robot_pos.csv', 'a', newline='') as file:
     writer = csv.writer(file)
     writer.writerows(test.data)
 print("file written")
+
+with open("training_data.p", 'wb') as f:
+    pickle.dump(test.data, f)
