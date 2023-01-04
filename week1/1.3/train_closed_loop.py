@@ -13,7 +13,7 @@ inp = np.array([[0, 0, 0, 0]])
 
 
 datasets = ["training_data.p"]
-for i in range(2, 31):
+for i in range(2, 32):
     datasets.append("training_data"+str(i)+".p")
 
 for dataset in datasets:
@@ -25,7 +25,7 @@ for dataset in datasets:
     end_pos = data[:, 2:]
     end_pos = (end_pos - 200) / 200
 
-    for i, angle in enumerate(angles):
+    for i, angle in tqdm(enumerate(angles)):
         for j, angle2 in enumerate(angles):
             if i!=j:
                 angles_diff = np.concatenate((angles_diff, [angle2]))
