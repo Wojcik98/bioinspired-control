@@ -6,22 +6,32 @@ import torch_model
 
 from tqdm import tqdm  # progress bar
 
-# Load data
-data = pickle.load(open("training_data.p", "rb"))
 
-angles = data[:, :2]
-angles /= 90.0
-end_pos = data[:, 2:]
-end_pos = (end_pos - 200) / 200
 
 angles_diff = np.array([[0, 0]])
 inp = np.array([[0, 0, 0, 0]])
 
-for i, angle in enumerate(angles):
-    for j, angle2 in enumerate(angles):
-        if i!=j:
-            angles_diff = np.concatenate((angles_diff, [angle2 - angle]))
-            inp = np.concatenate((inp, [np.concatenate((end_pos[j] - end_pos[i], angle))]))
+
+datasets = ["training_data.p"]
+for i in range(2, 21):
+    datasets.append("training_data"+str(i)+".p")
+
+for dataset in datasets:
+    print("Processing {}".format(dataset))
+    # Load data
+    data = pickle.load(open(dataset, "rb"))
+    angles = data[:, :2]
+    angles /= 90.0
+    end_pos = data[:, 2:]
+    end_pos = (end_pos - 200) / 200
+
+    for i, angle in enumerate(angles):
+        for j, angle2 in enumerate(angles):
+            if i!=j:
+                angles_diff = np.concatenate((angles_diff, [angle2 - angle]))
+                inp = np.concatenate((inp, [np.concatenate((end_pos[j] - end_pos[i], angle))]))
+
+
 inp = inp[1:, :]
 angles_diff = angles_diff[1:, :]
 print(inp)

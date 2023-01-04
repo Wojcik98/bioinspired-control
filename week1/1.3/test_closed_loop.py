@@ -80,17 +80,14 @@ while True:
     # cv2.waitKey(1)
     xy = ct.locate(frame)
     if xy[0] is not None:
-        print(xy)
+        t = [api.getPos('X', module), api.getPos('Y', module)]
         current_xy = torch.tensor([xy]).float()
         current_xy = (current_xy - 200) / 200
         with torch.no_grad():
             m_input = torch.tensor([np.append(inp - current_xy, np.divide(t, 90))]).float()
-            print(m_input)
             outp = model(m_input)
             dt = outp.numpy()[0]
-        print(dt)
         t = [t[0] + dt[0], t[1] + dt[1]]
-        print(t)
         api.setPos(t[0], t[1], module)
     # sleep(2)
     # while api.getMoving('X', module) and api.getMoving('Y', module):
