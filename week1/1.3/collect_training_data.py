@@ -56,6 +56,8 @@ class TestClass:
         if (datetime.datetime.now() - self.time_of_move).total_seconds() > 0.5:
             if x is not None:
                 print(x, y)
+                cv2.imshow("test", img)
+                k = cv2.waitKey(10)
                 tmeas1 = api.getPos(0, module)
                 tmeas2 = api.getPos(1, module)
                 self.data[self.i, :] = np.array([tmeas1, tmeas2, x, y])

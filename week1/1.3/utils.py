@@ -23,7 +23,7 @@ def initialize_robot(module=None):
     if module is None:
         module = moduleids[0]
     print('Found modules: ', moduleids)
-    api.setPos(0, 0, module)
+    api.setPos(40, 40, module)
     api.sleep(0.5)
     print(api.getPos('X', module))
     print(api.getPos('Y', module))

@@ -24,15 +24,20 @@ class MLPNet(torch.nn.Module):
         x = self.predict(x)
         return x
 
-#class Net(torch.nn.Module):
-#    def __init__(self, n_feature, n_hidden1, n_hidden2, n_output):
-#        super(Net, self).__init__()
-#        self.hidden1 = torch.nn.Linear(n_feature, n_hidden1)
-#        self.hidden2 = torch.nn.Linear(n_hidden1, n_hidden2)
-#        self.predict = torch.nn.Linear(n_hidden2, n_output)
 
-#    def forward(self, x):
-#        x = torch.sigmoid(self.hidden1(x))
-#        x = torch.sigmoid(self.hidden2(x))
-#        x = self.predict(x)
-#        return x
+class Net(torch.nn.Module):
+    def __init__(self, n_feature, n_hidden, n_output):
+        super(Net, self).__init__()
+        self.net = torch.nn.Sequential(
+            torch.nn.Linear(n_feature, n_hidden),
+            torch.nn.Sigmoid(),
+            torch.nn.Linear(n_hidden, n_hidden),
+            torch.nn.Sigmoid(),
+            torch.nn.Linear(n_hidden, n_hidden),
+            torch.nn.Sigmoid(),
+            torch.nn.Linear(n_hidden, n_output)
+        )
+
+    def forward(self, x):
+        x = self.net(x)
+        return x
