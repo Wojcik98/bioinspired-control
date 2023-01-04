@@ -52,8 +52,7 @@ coordinateStore1 = CoordinateStore()
 cv2.namedWindow("test")
 cv2.setMouseCallback('test', coordinateStore1.select_point)
 
-with torch.no_grad():
-    inp = torch.tensor([[0, 0]])
+inp = None
 model.eval()
 
 while True:
@@ -79,19 +78,23 @@ while True:
     # cv2.imshow("test", frame)
     # cv2.waitKey(1)
     xy = ct.locate(frame)
-    if xy[0] is not None:
+    if xy[0] is not None and inp is not None:
         print(xy)
         t = [api.getPos('X', module), api.getPos('Y', module)]
         current_xy = torch.tensor([xy]).float()
         current_xy = (current_xy - 200) / 200
-        with torch.no_grad():
-            m_input = torch.tensor([np.append(inp - current_xy, np.divide(t, 90))]).float()
-            print(m_input)
-            outp = model(m_input)
-            t = outp.numpy()[0] * 90
-            print(t)
-        # t = [t[0] + dt[0], t[1] + dt[1]]
-        api.setPos(t[0], t[1], module)
+        if np.linalg.norm(inp.numpy()[0] - current_xy.numpy()[0])*200 < 5:
+            inp = inp
+            #api.setPos(t[0], t[1], module)
+        else:
+            with torch.no_grad():
+                m_input = torch.tensor([np.append(inp - current_xy, np.divide(t, 90))]).float()
+                print(m_input)
+                outp = model(m_input)
+                t = outp.numpy()[0] * 90
+                print(t)
+            # t = [t[0] + dt[0], t[1] + dt[1]]
+            api.setPos(t[0], t[1], module)
     # sleep(2)
     # while api.getMoving('X', module) and api.getMoving('Y', module):
     #     sleep(0.1)
