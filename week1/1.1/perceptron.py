@@ -102,6 +102,9 @@ if __name__ == '__main__':
     p = Perceptron(2, SignActivation)
     print(p.predict(xdata[0, :]))
 
+    # Print initial weights
+    print(p.w)
+
     # DONE Learn the weights
     r = 0.001     # learning rate
     # calculate the error and update the weights
