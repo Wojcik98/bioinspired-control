@@ -1,7 +1,10 @@
 import numpy as np
+import copy
 
 from perceptron import Perceptron
 from activation import ActivationFunction
+
+import matplotlib.pyplot as plt
 
 class Sigmoid(ActivationFunction):
     """
@@ -139,27 +142,42 @@ class MLP:
         `t` : numpy array
            Targets (size: n_examples, n_outputs)
 
-        TODO: Write the function to iterate through training examples and apply gradient descent to update the neuron weights
+        DONE: Write the function to iterate through training examples and apply gradient descent to update the neuron weights
         """
 
+        N = len(inputs)
+
+        dw3 = np.zeros([self.n_hidden_units+1, self.n_outputs])
+        dw1 = np.zeros([self.num_inputs+1, self.n_hidden_units])
+
         # Loop over training examples
+        for i, t in enumerate(outputs):
+            # Forward pass
+            a1 = self.l1.activation(inputs[i])
+            o1 = self.l1.output(a1)
+            a2 = self.l_out.activation(o1)
+            o2 = self.l_out.output(a2)
 
-        # Forward pass
+            # Backpropagation
+            err2 = self.l_out.gradient(a2) * (o2 - t)
+            err1 = np.multiply(self.l1.gradient(a1), self.l_out.w[:-1] @ err2)
 
+            delta_out = -1 * err2 * self.alpha / N
+            delta1 = -1 * err1 * self.alpha / N
 
-        # Backpropagation
+            inp = inputs[i]
 
+            # Add weight change contributions to temporary array
+            o0 = np.insert(inp, 0, 1)
+            o1 = np.insert(o1, 0, 1)
 
-        # Add weight change contributions to temporary array
-        o0 = np.insert(inp, 0, 1)
-        o1 = np.insert(o1, 0, 1)
-
-        dw1 += delta1.reshape(-1,1).dot(o0.reshape(1,-1))
-        dw3 += delta_out.reshape(-1,1).dot(o1.reshape(1,-1))
+            dw1 += delta1.reshape(-1,1).dot(o0.reshape(1,-1)).T
+            dw3 += delta_out.reshape(-1,1).dot(o1.reshape(1,-1)).T
 
         # Update weights
 
-        return None # remove this line
+        self.l1.update_weights(dw1)
+        self.l_out.update_weights(dw3)
 
     def export_weights(self):
         return [self.l1.w, self.l_out.w]
@@ -177,10 +195,8 @@ def calc_prediction_error(model, x, t):
     """ Calculate the average prediction error """
     # DONE: Write the function
     loss = 0
-    for inp in x:
-        prediction = model.predict(inp)
-        for dim in range(len(prediction)):
-            loss += (prediction[dim] - t[dim]) ** 2
+    for i, inp in enumerate(x):
+        loss += np.linalg.norm(model.predict(inp) - t[i])**2
     return loss / len(x)
 
 
@@ -219,8 +235,33 @@ if __name__ == "__main__":
 
 
     # DONE: Initialization
-    model = MLP(2, 2, 1)
+    modele2 = MLP(2, 2, 1, alpha=1e-2)
+    modele3 = copy.deepcopy(modele2)
+    modele3.alpha = 1e-3
+    modele4 = copy.deepcopy(modele2)
+    modele4.alpha = 1e-4
 
 
-    # TODO: Write a for loop to train the network for a number of iterations. Make plots.
+
+    # DONE: Write a for loop to train the network for a number of iterations. Make plots.
+    lossese2 = []
+    lossese3 = []
+    lossese4 = []
+    for i in range(5000):
+        modele2.train(x, t)
+        modele3.train(x, t)
+        modele4.train(x, t)
+        lossese2.append(calc_prediction_error(modele2, x, t))
+        lossese3.append(calc_prediction_error(modele3, x, t))
+        lossese4.append(calc_prediction_error(modele4, x, t))
+
+
+    plt.plot(lossese2, label="a = 1e-2")
+    plt.plot(lossese3, label="a = 1e-3")
+    plt.plot(lossese4, label="a = 1e-4")
+    plt.yscale("log")
+    plt.ylabel("Loss")
+    plt.xlabel("Epoch")
+    plt.legend()
+    plt.show()
     pass
