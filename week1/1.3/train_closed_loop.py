@@ -28,8 +28,12 @@ for dataset in datasets:
     for i, angle in enumerate(angles):
         for j, angle2 in enumerate(angles):
             if i!=j:
-                angles_diff = np.concatenate((angles_diff, [angle2 - angle]))
+                angles_diff = np.concatenate((angles_diff, [angle2]))
                 inp = np.concatenate((inp, [np.concatenate((end_pos[j] - end_pos[i], angle))]))
+with open('processed.p', 'wb') as file:
+    pickle.dump((inp, angles_diff), file)
+# with open('processed.p', 'rb') as file:
+#     inp, angles_diff = pickle.load(file)
 
 
 inp = inp[1:, :]
@@ -58,7 +62,7 @@ x_test, y_test = x[test.indices], y[test.indices]
 # Eventually normalize the data
 
 # Define neural network - an example
-model = torch_model.MLPNet(4, 30, 2)
+model = torch_model.Net(4, 50, 2)
 model.to(device)
 # model = torch_model.Net(n_feature=2, n_hidden1=h, n_hidden2=h, n_output=2)
 # print(model)
@@ -67,8 +71,8 @@ loss_func = torch.nn.MSELoss()
 num_epochs = 500
 
 # h = 16
-g = 0.8
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=g)
+g = 0.5
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=75, gamma=g)
 
 l_vec = np.zeros(num_epochs)
 l_test_vec = np.zeros(num_epochs)

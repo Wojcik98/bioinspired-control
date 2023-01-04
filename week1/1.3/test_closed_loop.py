@@ -25,7 +25,7 @@ accurateY = 'HIGH'
 api.setAccurate(accurateX, accurateY, module)
 
 # TODO Load the trained model
-model = torch_model.MLPNet(4, 30, 2)
+model = torch_model.Net(4, 50, 2)
 model.load_state_dict(torch.load('closed_loop_trained_model.pth'))
 
 
@@ -80,14 +80,17 @@ while True:
     # cv2.waitKey(1)
     xy = ct.locate(frame)
     if xy[0] is not None:
+        print(xy)
         t = [api.getPos('X', module), api.getPos('Y', module)]
         current_xy = torch.tensor([xy]).float()
         current_xy = (current_xy - 200) / 200
         with torch.no_grad():
             m_input = torch.tensor([np.append(inp - current_xy, np.divide(t, 90))]).float()
+            print(m_input)
             outp = model(m_input)
-            dt = outp.numpy()[0]
-        t = [t[0] + dt[0], t[1] + dt[1]]
+            t = outp.numpy()[0] * 90
+            print(t)
+        # t = [t[0] + dt[0], t[1] + dt[1]]
         api.setPos(t[0], t[1], module)
     # sleep(2)
     # while api.getMoving('X', module) and api.getMoving('Y', module):

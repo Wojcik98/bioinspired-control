@@ -31,9 +31,9 @@ class Net(torch.nn.Module):
         self.net = torch.nn.Sequential(
             torch.nn.Linear(n_feature, n_hidden),
             torch.nn.Sigmoid(),
-            torch.nn.Linear(n_feature, n_hidden),
+            torch.nn.Linear(n_hidden, n_hidden),
             torch.nn.Sigmoid(),
-            torch.nn.Linear(n_feature, n_hidden),
+            torch.nn.Linear(n_hidden, n_hidden),
             torch.nn.Sigmoid(),
             torch.nn.Linear(n_hidden, n_output)
         )
