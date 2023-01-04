@@ -93,7 +93,7 @@ plt.plot(l_test_vec)
 plt.legend(['train', 'test'])
 plt.yscale('log')
 
-torch.save(model.state_dict(), 'trained_model.pth')
+torch.save(model.state_dict(), 'closed_loop_trained_model.pth')
 plt.show()
 
 # Parameter TIPS - Try
