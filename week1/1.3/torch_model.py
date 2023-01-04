@@ -35,6 +35,8 @@ class Net(torch.nn.Module):
             torch.nn.Sigmoid(),
             torch.nn.Linear(n_hidden, n_hidden),
             torch.nn.Sigmoid(),
+            torch.nn.Linear(n_hidden, n_hidden),
+            torch.nn.Sigmoid(),
             torch.nn.Linear(n_hidden, n_output)
         )
 

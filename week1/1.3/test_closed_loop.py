@@ -26,7 +26,7 @@ api.setAccurate(accurateX, accurateY, module)
 
 # TODO Load the trained model
 model = torch_model.Net(4, 50, 2)
-model.load_state_dict(torch.load('closed_loop_trained_model.pth'))
+model.load_state_dict(torch.load('closed_loop_trained_model_deeper.pth'))
 
 
 # dummy class for targets
