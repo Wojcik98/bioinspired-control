@@ -19,9 +19,9 @@ print(data)
 # ])
 
 print(data.shape)
-angles = data[:, 2:]
+angles = data[:, :2]
 angles /= 90.0
-end_pos = data[:, :2]
+end_pos = data[:, 2:]
 end_pos = (end_pos - 200) / 200
 
 # Use GPU?
@@ -33,6 +33,7 @@ if torch.cuda.is_available():
 
 x = torch.from_numpy(end_pos).float()
 y = torch.from_numpy(angles).float()
+print(y)
 # DONE split the training set and test set
 print(len(x.cpu()))
 train, test = torch.utils.data.random_split(range(len(x)), [0.8, 0.2])
@@ -48,12 +49,12 @@ if device == 'cuda':
 model = torch_model.MLPNet(2, 30, 2)
 # model = torch_model.Net(n_feature=2, n_hidden1=h, n_hidden2=h, n_output=2)
 # print(model)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 loss_func = torch.nn.MSELoss()
 num_epochs = 500
 
 # h = 16
-g = 0.99
+g = 0.8
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=g)
 
 l_vec = np.zeros(num_epochs)

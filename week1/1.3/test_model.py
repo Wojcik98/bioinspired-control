@@ -25,7 +25,7 @@ accurateY = 'HIGH'
 api.setAccurate(accurateX, accurateY, module)
 
 # TODO Load the trained model
-model = torch_model.MLPNet(2, 100, 2)
+model = torch_model.MLPNet(2, 30, 2)
 model.load_state_dict(torch.load('trained_model.pth'))
 
 
@@ -75,7 +75,7 @@ while True:
         api.setPos(t[0], t[1], module)
         coordinateStore1.new = False
 
-    sleep(1.5)
+    # sleep(1.5)
 
 print('Terminating')
 api.terminate()
