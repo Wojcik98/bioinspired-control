@@ -6,6 +6,7 @@ import camera_tools as ct
 from FableAPI.fable_init import api
 from utils import initialize_camera, initialize_robot
 from time import sleep
+import pickle
 
 cam = ct.prepare_camera()
 print(cam.isOpened())  # False
@@ -25,9 +26,8 @@ accurateY = 'HIGH'
 api.setAccurate(accurateX, accurateY, module)
 
 # TODO Load the trained model
-model = torch_model.Net(4, 50, 2)
-model.load_state_dict(torch.load('closed_loop_trained_model_deeper.pth'))
-
+model = torch_model.RNNNet()
+model.load_state_dict(torch.load('closed_loop_trained_RNN_model2.pth'))
 
 # dummy class for targets
 class CoordinateStore:
@@ -83,14 +83,19 @@ while True:
         t = [api.getPos('X', module), api.getPos('Y', module)]
         current_xy = torch.tensor([xy]).float()
         current_xy = (current_xy - 200) / 200
-        if np.linalg.norm(inp.numpy()[0] - current_xy.numpy()[0])*200 < 5:
-            inp = inp
-            #api.setPos(t[0], t[1], module)
+        if np.linalg.norm(inp.numpy()[0] - current_xy.numpy()[0])*200 < 25:
+            inp = None
+            api.setPos(t[0], t[1], module)
         else:
             with torch.no_grad():
-                m_input = torch.tensor([np.append(inp - current_xy, np.divide(t, 90))]).float()
+                m_input = torch.tensor([np.append(current_xy, np.divide(t, 90))]).float()
+                m_input = m_input[None, :]
+                # check whether target is concatenated in the right axis
+                target = torch.tensor(np.concatenate((inp - current_xy, t))).float()
+                target = target[None, :]
                 print(m_input)
-                outp = model(m_input)
+                print(target)
+                outp = model(m_input, target, train=False)
                 t = outp.numpy()[0] * 90
                 print(t)
             # t = [t[0] + dt[0], t[1] + dt[1]]
