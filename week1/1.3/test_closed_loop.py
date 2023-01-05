@@ -26,7 +26,7 @@ api.setAccurate(accurateX, accurateY, module)
 
 # TODO Load the trained model
 model = torch_model.Net(4, 50, 2)
-model.load_state_dict(torch.load('closed_loop_trained_model_deeper.pth'))
+model.load_state_dict(torch.load('closed_loop_trained_model.pth'))
 
 
 # dummy class for targets
@@ -84,8 +84,8 @@ while True:
         current_xy = torch.tensor([xy]).float()
         current_xy = (current_xy - 200) / 200
         if np.linalg.norm(inp.numpy()[0] - current_xy.numpy()[0])*200 < 5:
-            inp = inp
-            #api.setPos(t[0], t[1], module)
+            inp = None
+            api.setPos(max(-90, min(90, t[0])), max(-90, min(90, t[1])), module)
         else:
             with torch.no_grad():
                 m_input = torch.tensor([np.append(inp - current_xy, np.divide(t, 90))]).float()
@@ -94,10 +94,17 @@ while True:
                 t = outp.numpy()[0] * 90
                 print(t)
             # t = [t[0] + dt[0], t[1] + dt[1]]
-            api.setPos(t[0], t[1], module)
-    # sleep(2)
-    # while api.getMoving('X', module) and api.getMoving('Y', module):
-    #     sleep(0.1)
+            t0 = [api.getPos('X', module), api.getPos('Y', module)]
+            k = 0.8
+            print("===")
+            if np.linalg.norm(t - t0) < 4:
+                inp = None
+            target = k*(t - t0) + t0
+            api.setPos(max(-90, min(90, target[0])), max(-90, min(90, target[1])), module)
+            sleep(0.1)
+
+    while api.getMoving('X', module) or api.getMoving('Y', module):
+        sleep(0.1)
     # sleep(1.5)
 
 print('Terminating')
