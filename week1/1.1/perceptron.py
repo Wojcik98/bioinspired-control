@@ -102,6 +102,10 @@ if __name__ == '__main__':
     p = Perceptron(2, SignActivation)
     print(p.predict(xdata[0, :]))
 
+    # Test predict function
+    for i in range(5):
+        print(p.predict(xdata[i, :]))
+
     # Print initial weights
     print(p.w)
 
