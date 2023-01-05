@@ -6,11 +6,11 @@ import torch_model
 
 from tqdm import tqdm  # progress bar
 
-N_measurements = 2000 # how long is the sequence
+N_measurements = 400 # how long is the sequence
 N_measurement_series = 10 # how many sequences generated from each dataset
 
 datasets = ["training_data.p"]
-for i in range(2, 3):   # to 32 !!!!!
+for i in range(2, 32):
     datasets.append("training_data"+str(i)+".p")
 
 training_data = np.array([[[0, 0, 0, 0] for _ in range(N_measurements)]])
@@ -70,7 +70,7 @@ model.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 regime = 0
 loss_func = torch.nn.MSELoss()
-num_epochs = 50000
+num_epochs = 20000
 
 # h = 16
 g = 0.5
@@ -123,7 +123,7 @@ plt.plot(l_compare_vec)
 plt.legend(['train', 'test', 'no RNN'])
 plt.yscale('log')
 
-torch.save(model.state_dict(), 'closed_loop_trained_RNN_model3.pth')
+torch.save(model.state_dict(), 'closed_loop_trained_RNN_model4.pth')
 plt.show()
 
 # Parameter TIPS - Try

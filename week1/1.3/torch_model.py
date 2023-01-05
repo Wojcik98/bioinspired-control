@@ -44,8 +44,9 @@ class Net(torch.nn.Module):
 
 
 class RNNNet(torch.nn.Module):
-    def __init__(self, n_feature=4, n_ffnn=20, layers_rnn=2, n_RNN=10, n_latent=6, n_target=4, n_decoder=50, n_output=2):
+    def __init__(self, n_feature=4, n_ffnn=20, layers_rnn=2, n_RNN=15, n_latent=20, n_target=4, n_decoder=50, n_output=2):
         super(RNNNet, self).__init__()
+        self.n_latent = n_latent
         self.ffnn = torch.nn.Sequential(
             torch.nn.Linear(n_feature, n_ffnn),
             torch.nn.Sigmoid(),
@@ -81,12 +82,12 @@ class RNNNet(torch.nn.Module):
     def decode(self, target, x=None, train=True):
         if x is None:
             x_shape = list(target.shape)
-            x_shape[2] = 6
+            x_shape[2] = self.n_latent
             x = torch.zeros(x_shape).cuda()
         if train:
             x = torch.cat((x, target), 2)
         else:
-            x = torch.cat((x, target), 1)  # the input isn't batched
+            x = torch.cat((x[0], target), 1)  # the input isn't batched
         x = self.decoder(x)
         return x
 

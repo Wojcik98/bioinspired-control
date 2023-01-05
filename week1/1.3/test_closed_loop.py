@@ -26,7 +26,8 @@ accurateY = 'HIGH'
 api.setAccurate(accurateX, accurateY, module)
 
 # TODO Load the trained model
-model = torch_model.RNNNet()
+model = torch_model.RNNNet(n_feature=4, n_ffnn=20, layers_rnn=2, n_RNN=10, n_latent=6, n_target=4, n_decoder=50, n_output=2)
+# previous parameters
 model.load_state_dict(torch.load('closed_loop_trained_RNN_model2.pth'))
 
 # dummy class for targets
@@ -91,18 +92,15 @@ while True:
                 m_input = torch.tensor([np.append(current_xy, np.divide(t, 90))]).float()
                 m_input = m_input[None, :]
                 # check whether target is concatenated in the right axis
-                target = torch.tensor(np.concatenate((inp - current_xy, t))).float()
+                target = torch.tensor(np.concatenate((inp[0].numpy() - current_xy[0].numpy(), t))).float()
                 target = target[None, :]
-                print(m_input)
-                print(target)
                 outp = model(m_input, target, train=False)
                 t = outp.numpy()[0] * 90
-                print(t)
-            # t = [t[0] + dt[0], t[1] + dt[1]]
-            api.setPos(t[0], t[1], module)
+                # t = [t[0] + dt[0], t[1] + dt[1]]
+                api.setPos(t[0], t[1], module)
     # sleep(2)
-    # while api.getMoving('X', module) and api.getMoving('Y', module):
-    #     sleep(0.1)
+    while api.getMoving('X', module) and api.getMoving('Y', module):
+        sleep(0.1)
     # sleep(1.5)
 
 print('Terminating')
