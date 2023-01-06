@@ -114,12 +114,23 @@ if __name__ == '__main__':
     # calculate the error and update the weights
     epochs = 1000
 
+    updates = []
     for epoch in range(epochs):
+        total_update = 0
         for i in range(xdata.shape[0]):
             x = xdata[i, :]
             y_pred = p.predict(x)
             y_target = ydata[i]
-            p.w += r * (y_target - y_pred) * np.append(x, [1])
+            update = (y_target - y_pred) * np.append(x, [1])
+            p.w += r * update
+            total_update += sum(abs(update))
+
+        updates.append(total_update)
+
+    plt.plot(range(epochs), updates)
+    plt.xlabel('Epochs')
+    plt.ylabel('Update value')
+    plt.show()
 
     print(p.w)
     # DONE plot points and linear decision boundary
