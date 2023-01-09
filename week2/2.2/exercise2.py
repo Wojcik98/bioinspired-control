@@ -105,10 +105,13 @@ for t in np.arange(0, int(L), dt):
         desired_torque = Sim.pdcontroller(desired_ang, ang, vel)
 
         ## Forward dynamics
-        ## TODO DEFINE NOISE - you can use randn
-        ## TODO ADD NOISE to torque
+        ## DONE DEFINE NOISE - you can use randn
+        ## DONE ADD NOISE to torque
+        print(desired_torque)
+        sigma = np.array([15, 1])
+        noisy_torque = desired_torque + sigma * np.random.randn(2)
         # Pass torque to plant
-        [ang, vel, acc] = Sim.plant(ang, vel, acc, desired_torque)
+        [ang, vel, acc] = Sim.plant(ang, vel, acc, noisy_torque)
 
         ## Forward kinematics
         # Calculate new joint positions

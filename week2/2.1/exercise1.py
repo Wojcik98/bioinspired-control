@@ -30,4 +30,5 @@ for delay in range(4):
     plt.plot(time, y)
     plt.xlabel('time step')
     plt.ylabel('y')
+    plt.title(f'Delay {delay} samples')
     plt.show()
