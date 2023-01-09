@@ -15,17 +15,17 @@ K = 1
 # Set first output
 y[0] = 1
 
-# TODO define the time delay
+# DONE define the time delay
 for delay in range(4):
     # Simulation
     for t in range(simlen - 1):
         # Compute output
-        # TODO include the time delay
+        # DONE include the time delay
         reading = y[t - delay] if t - delay >= 0 else y[0]
         u = K * (target - reading)
         y[t + 1] = 0.5 * y[t] + 0.4 * u  # 1st order dynamics
 
-    ## Plot
+    # Plot
     time = range(simlen)
     plt.plot(time, y)
     plt.xlabel('time step')
