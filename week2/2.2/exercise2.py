@@ -36,10 +36,12 @@ Sim = SimulationFunctions(Var)
 
 ang = [-np.pi / 4, np.pi]
 ang_rec = np.zeros((int(L / dt + 1), 2))
+ang_rec[0, :] = ang
 delayed_ang = ang[:]
 # Joint velocity [shoulder elbow]
 vel = [0, 0]
 vel_rec = np.zeros((int(L / dt + 1), 2))
+vel_rec[0, :] = vel
 delayed_vel = vel[:]
 # Joint acceleration [shoulder elbow]
 acc = [0, 0]
@@ -63,7 +65,8 @@ curr_target = 0
 # Movement start_time
 start_t = 0
 
-# TODO define time steps of delay
+# DONE define time steps of delay
+delay = 0
 
 ## Simulation
 
@@ -98,17 +101,23 @@ for t in np.arange(0, int(L), dt):
         desired_ang = np.real(Sim.invkinematics(desired_pos))
 
         ## Inverse dynamics
-        ## TODO Define delayed angles and velocities
-        ## TODO Compute torque with delayed angles and velocities
+        ## DONE Define delayed angles and velocities
+        ## DONE Compute torque with delayed angles and velocities
+        if round(t / dt) + 1 - delay >= 0:
+            delayed_ang = ang_rec[round(t / dt) + 1 - delay, :]
+            delayed_vel = vel_rec[round(t / dt) + 1 - delay, :]
+        else:
+            delayed_ang = ang_rec[0, :]
+            delayed_vel = vel_rec[0, :]
 
         # Get desired torque from PD controller
-        desired_torque = Sim.pdcontroller(desired_ang, ang, vel)
+        desired_torque = Sim.pdcontroller(desired_ang, delayed_ang, delayed_vel)
 
         ## Forward dynamics
         ## DONE DEFINE NOISE - you can use randn
         ## DONE ADD NOISE to torque
-        print(desired_torque)
-        sigma = np.array([15, 1])
+        # sigma = np.array([15, 1])
+        sigma = np.array([0, 0])
         noisy_torque = desired_torque + sigma * np.random.randn(2)
         # Pass torque to plant
         [ang, vel, acc] = Sim.plant(ang, vel, acc, noisy_torque)
