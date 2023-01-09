@@ -13,9 +13,9 @@ dt = .01
 # Simulation duration
 L = 6.0
 # Proportional parameter
-kp = 200.0
+kp = 35.0
 # Derivative parameter
-kd = 11.0
+kd = 3.5
 # Upper arm length
 le1 = .3
 # Lower arm length
@@ -116,7 +116,7 @@ for t in np.arange(0, int(L), dt):
         ## Forward dynamics
         ## DONE DEFINE NOISE - you can use randn
         ## DONE ADD NOISE to torque
-        # sigma = np.array([15, 1])
+        # sigma = np.array([80, 10])
         sigma = np.array([0, 0])
         noisy_torque = desired_torque + sigma * np.random.randn(2)
         # Pass torque to plant
