@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.interpolate as interp
 
 # time parameters
 dt = 0.005
@@ -24,8 +25,8 @@ w2 = 0
 alpha = 1e-5
 
 # weight histories
-w1_hist=[]
-w2_hist=[]
+w1_hist=np.array([])
+w2_hist=np.array([])
 
 delay_true = 10 # time steps
 
@@ -135,7 +136,7 @@ for i in range(n_trials):
         
         ax1.plot(tvec, pos_estim_plot, 'k', label='estimated pos')
         ax1.legend()
-        ax1.title.set_text('First trial')
+        ax1.title.set_text('First trial with alpha = ' + str(alpha))
 
         ax2.plot(tvec, vel_plot, label='vel')
         ax2.set_xlabel('time')
@@ -152,8 +153,8 @@ for i in range(n_trials):
         ax3.plot(tvec, acc_estim_plot, 'k', label='estimated acc')
         ax3.legend()
 
-    w1_hist.append(w1)
-    w2_hist.append(w2)
+    w1_hist = np.append(w1_hist, w1)
+    w2_hist = np.append(w2_hist, w2)
 
 f, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True, num=2)
 
@@ -163,7 +164,7 @@ ax1.set_ylabel('pos')
 
 ax1.plot(tvec, pos_estim_plot, 'k', label='estimated pos')
 ax1.legend()
-ax1.title.set_text('Last trial')
+ax1.title.set_text('Last trial with alpha = ' + str(alpha))
 
 
 ax2.plot(tvec, vel_plot, label='vel')
@@ -182,6 +183,22 @@ ax3.plot(tvec, acc_estim_plot, 'k', label='estimated acc')
 ax3.legend()
 
 ## TODO: Plot change in weights
+w1_inter = interp.interp1d(np.arange(w1_hist.size), w1_hist)
+w1_ = w1_inter(np.linspace(0,w1_hist.size-1,tvec.size))
+w2_inter = interp.interp1d(np.arange(w2_hist.size), w2_hist)
+w2_ = w2_inter(np.linspace(0,w2_hist.size-1,tvec.size))
 
+f, (ax4, ax5) = plt.subplots(2, 1, sharex=True, num=3)
+ax4.plot(tvec, w1_, label='weights')
+ax5.plot(tvec, w2_, label='weights')
+ax4.set_xlabel('time')
+ax4.set_ylabel('weight')
+ax4.legend
+ax5.set_xlabel('time')
+ax5.set_ylabel('weight')
+ax5.legend
 
+ax4.title.set_text('trial with alpha = ' + str(alpha))
+#print(w1_hist)
+#print(tvec)
 plt.show()
