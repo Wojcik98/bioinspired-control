@@ -19,10 +19,12 @@ theta_vec = np.zeros(n_steps*n_trials)
 theta_ref_vec = np.zeros(n_steps*n_trials)
 
 ## Feedback controller variables
-Kp = 2
-Kv = 0
+Kp = 12
+Kv = 5
 
-## TODO: Define parameters for periodic reference trajectory
+## DONE: Define parameters for periodic reference trajectory
+A = np.pi
+T = 5
 
 
 ## TODO: CMAC initialization
@@ -32,8 +34,9 @@ Kv = 0
 ## Simulation loop
 for i in range(n_steps*n_trials):
     t = i*Ts
-    ## TODO: Calculate the reference at this time step
-    theta_ref = np.pi/4
+    ## DONE: Calculate the reference at this time step
+    # theta_ref = np.pi/4
+    theta_ref = A * np.sin(2* np.pi * t /T)
 
     # Measure
     theta = plant.theta
@@ -69,4 +72,5 @@ plt.legend()
 #plt.figure()
 #plt.plot(trial_error)
 
+plt.savefig("2_6_4.png")
 plt.show()
