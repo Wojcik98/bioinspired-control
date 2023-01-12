@@ -9,7 +9,7 @@ from src import NetworkCartPole
 
 
 def main():
-    path = Path("data/2023-01-12_13-22-46/net_best.pth")
+    path = Path("data/2023-01-12_13-26-59/net_best.pth")
 
     games = 100
 
