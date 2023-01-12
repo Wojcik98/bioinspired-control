@@ -37,8 +37,9 @@ class AgentOffPolicy:
         """
 
         action = self.exploration.random_action()
+        # DONE
         if action is None:
-            nn_ouput = self.net(state)
+            nn_ouput = self.net.forward(state)
             if nn_ouput[0] > nn_ouput[1]:
                 action = 0
             else:
@@ -47,9 +48,13 @@ class AgentOffPolicy:
 
     def learn(self) -> None:
         """Takes care of the learning of the network."""
-        # TODO get the batches from the memory
-        # TODO compute q and q target
-        # TODO train the network
+        states, actions, rewards, states_, dones = self.memory.batch()
+
+        #DONE
+        qs = self.net.forward(states)
+        q_targets = qs[1:] + rewards[:-1]
+        qs = qs[:-1]
+        self.net.learn(qs, q_targets)
        
     def memory_add(self, state: np.array, action: int, reward: float, state_: np.array, done: int) -> None:
         """
