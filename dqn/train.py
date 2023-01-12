@@ -60,7 +60,7 @@ class Checkpoint:
 
 
 def main():
-    games = 100
+    games = 150
     batch_sz = 32
     max_sz = 200
     batch_numbers = 1
@@ -128,7 +128,7 @@ def main():
             action = agent.choose_action(state)
 
             state_, reward, done, truncated, _ = env.step(action)
-            # done = done or truncated
+            done = done or truncated
 
             agent.memory_add(state, action, reward, state_, done)
 
