@@ -8,7 +8,7 @@ from typing import Tuple
 class NetworkCartPole(nn.Module):
     """Network used in the CartPole task"""
 
-    def __init__(self, input_dim: Tuple, output_dim: Tuple, lr: float, device: torch.device) -> None:
+    def __init__(self, input_dim: Tuple, output_dim: int, lr: float, device: torch.device) -> None:
         """
         Creates the network, the optimized, the loss function and the attributes
 
@@ -20,9 +20,25 @@ class NetworkCartPole(nn.Module):
         """
         super(NetworkCartPole, self).__init__()
 
-        # TODO creates the network
-        # TODO init the loss function
-        # TODO init the optimizer
+        self.in_dim = input_dim[0]
+        self.out_dim = output_dim
+
+        # DONE creates the network
+        self.net = torch.nn.Sequential(
+            nn.Linear(self.in_dim, 64),
+            nn.ReLU(),
+            nn.Linear(64, 64),
+            nn.ReLU(),
+            nn.Linear(64, 32),
+            nn.ReLU(),
+            nn.Linear(32, self.out_dim),
+        )
+
+        # DONE init the loss function
+        self.loss_fn = nn.MSELoss()
+
+        # DONE init the optimizer
+        self.optim = optim.Adam(self.net.parameters(), lr=lr)
 
     def forward(self, state: torch.tensor) -> torch.tensor:
         """
@@ -31,7 +47,8 @@ class NetworkCartPole(nn.Module):
         Returns:
             prediction of the network.
         """
-        # TODO inference of the network
+        self.optim.zero_grad()
+        return self.net(state)
 
     def learn(self, y: torch.tensor, y_hat: torch.tensor) -> None:
         """
@@ -41,7 +58,9 @@ class NetworkCartPole(nn.Module):
             y: prediction
             y_hat: target
         """
-        # TODO Train the network
+        loss = self.loss_fn(y, y_hat)
+        loss.backward()
+        self.optim.step()
     
     def save(self, path: Path) -> None:
         """Saves the network"""
@@ -50,4 +69,3 @@ class NetworkCartPole(nn.Module):
     def load(self, path: Path) -> None:
         """Loads the network"""
         self.load_state_dict(torch.load(path))
-
