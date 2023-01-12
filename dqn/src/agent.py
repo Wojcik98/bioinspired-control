@@ -49,12 +49,8 @@ class AgentOffPolicy:
     def learn(self) -> None:
         """Takes care of the learning of the network."""
         states, actions, rewards, states_, dones = self.memory.batch()
-
-        #DONE
-        qs = self.net.forward(states)
-        q_targets = qs[1:] + rewards[:-1]
-        qs = qs[:-1]
-        self.net.learn(qs, q_targets)
+        qs, q_hats = self.learn_algo(self.net, states, actions, rewards, states_, dones)
+        self.net.learn(qs, q_hats)
        
     def memory_add(self, state: np.array, action: int, reward: float, state_: np.array, done: int) -> None:
         """

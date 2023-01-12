@@ -36,4 +36,9 @@ class LearnDQN:
             q: predicted q value
             q_hat: q target value
         """
-        # TODO compute q target and q values
+        # DONE compute q target and q values
+
+        qs = net.forward(states)
+        q_targets = qs[1:] + rewards[:-1]
+        qs = qs[:-1]
+        return qs, q_targets
