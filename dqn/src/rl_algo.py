@@ -38,9 +38,10 @@ class LearnDQN:
         """
         # DONE compute q target and q values
         actions = actions[0].numpy()
-        qs = net.forward(states)[np.arange(len(actions)), actions]
-        future_qs = torch.max(net.forward(states_), dim=1)
+        qs = net.forward(states)
+        chosen_qs = qs[:, np.arange(len(actions)), actions]
+        future_qs = torch.max(net.forward(states_), dim=2).values
 
-        q_targets = future_qs*self.discount_factor + rewards
+        q_targets = future_qs * self.discount_factor + rewards
 
-        return qs, q_targets
+        return chosen_qs, q_targets

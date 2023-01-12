@@ -126,6 +126,7 @@ def main():
         state, _ = env.reset()
         while not done:
             action = agent.choose_action(state)
+
             state_, reward, done, truncated, _ = env.step(action)
             # done = done or truncated
 
@@ -160,6 +161,7 @@ def main():
     plt.ylabel("Mean Score")
     plt.title("Mean scores over the games")
     plt.savefig(chkpt.path / "plot.png")
+    plt.show()
 
 if __name__ == "__main__":
     main()
