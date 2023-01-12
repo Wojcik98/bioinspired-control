@@ -35,8 +35,15 @@ class AgentOffPolicy:
         Returns:
             action: the choosen action.
         """
+
         action = self.exploration.random_action()
-        # TODO comupute the action if needed
+        if action is None:
+            nn_ouput = self.net(state)
+            if nn_ouput[0] > nn_ouput[1]:
+                action = 0
+            else:
+                action = 1
+        return action
 
     def learn(self) -> None:
         """Takes care of the learning of the network."""
