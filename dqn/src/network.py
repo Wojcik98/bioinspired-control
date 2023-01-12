@@ -25,20 +25,16 @@ class NetworkCartPole(nn.Module):
 
         # DONE creates the network
         self.net = torch.nn.Sequential(
-            nn.Linear(self.in_dim, 64),
+            nn.Linear(self.in_dim, 128),
             nn.ReLU(),
-            nn.Linear(64, 64),
-            nn.ReLU(),
-            nn.Linear(64, 32),
-            nn.ReLU(),
-            nn.Linear(32, self.out_dim),
+            nn.Linear(128, self.out_dim),
         )
 
         # DONE init the loss function
         self.loss_fn = nn.MSELoss()
 
         # DONE init the optimizer
-        self.optim = optim.Adam(self.net.parameters(), lr=lr)
+        self.optim = optim.RMSprop(self.net.parameters(), lr=lr)
 
     def forward(self, state: torch.tensor) -> torch.tensor:
         """
@@ -47,7 +43,6 @@ class NetworkCartPole(nn.Module):
         Returns:
             prediction of the network.
         """
-        self.optim.zero_grad()
         return self.net(state)
 
     def learn(self, y: torch.tensor, y_hat: torch.tensor) -> None:
@@ -61,11 +56,14 @@ class NetworkCartPole(nn.Module):
         loss = self.loss_fn(y, y_hat)
         loss.backward()
         self.optim.step()
+        self.optim.zero_grad()
     
     def save(self, path: Path) -> None:
         """Saves the network"""
+        print(path)
         torch.save(self.state_dict(), path)
 
     def load(self, path: Path) -> None:
         """Loads the network"""
+        print(path)
         self.load_state_dict(torch.load(path))

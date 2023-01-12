@@ -40,7 +40,7 @@ class AgentOffPolicy:
         # DONE
         if action is None:
             state = torch.unsqueeze(torch.tensor(state), dim=0)
-            nn_ouput = self.net.forward(state)
+            nn_ouput = self.net(state)
             action = torch.argmax(nn_ouput, dim=1).numpy()[0]
         return action
 

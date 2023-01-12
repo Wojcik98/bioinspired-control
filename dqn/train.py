@@ -60,7 +60,7 @@ class Checkpoint:
 
 
 def main():
-    games = 1000
+    games = 100
     batch_sz = 32
     max_sz = 200
     batch_numbers = 1
