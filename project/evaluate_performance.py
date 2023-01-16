@@ -34,6 +34,8 @@ cv2.namedWindow("test")
 
 model.eval()
 
+np.random.seed(0)
+
 runs = []
 for i in range(100):
     print(f"{i}/100")
