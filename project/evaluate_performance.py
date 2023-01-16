@@ -63,6 +63,21 @@ for i in range(100):
     current_xy = (current_xy - 200) / 200
     run.append(np.linalg.norm(inp - current_xy) * 200 + 200)
     for j in range(7):
+
+        with torch.no_grad():
+            m_input = torch.tensor([np.append(inp - current_xy, np.divide(t, 90))]).float()
+            outp = model(m_input)
+            t = outp.numpy()[0] * 90
+        # t = [t[0] + dt[0], t[1] + dt[1]]
+        t0 = [api.getPos('X', module), api.getPos('Y', module)]
+        k = 0.9
+
+        target = k * (t - t0) + t0
+        api.setPos(max(-90, min(90, target[0])), max(-90, min(90, target[1])), module)
+
+        while api.getMoving('X', module) or api.getMoving('Y', module):
+            sleep(0.1)
+
         frame = ct.capture_image(cam)
         xy = ct.locate(frame)
         cv2.imshow("test", frame)
@@ -79,26 +94,8 @@ for i in range(100):
                 break
 
             xy = ct.locate(frame)
-
-        t = [api.getPos('X', module), api.getPos('Y', module)]
         current_xy = torch.tensor([xy]).float()
         current_xy = (current_xy - 200) / 200
-
-        with torch.no_grad():
-            m_input = torch.tensor([np.append(inp - current_xy, np.divide(t, 90))]).float()
-            outp = model(m_input)
-            t = outp.numpy()[0] * 90
-        # t = [t[0] + dt[0], t[1] + dt[1]]
-        t0 = [api.getPos('X', module), api.getPos('Y', module)]
-        k = 0.9
-
-        target = k * (t - t0) + t0
-        api.setPos(max(-90, min(90, target[0])), max(-90, min(90, target[1])), module)
-
-
-
-        while api.getMoving('X', module) or api.getMoving('Y', module):
-            sleep(0.1)
 
         run.append(np.linalg.norm(inp - current_xy) * 200 + 200)
         sleep(0.1)
