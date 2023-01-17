@@ -16,8 +16,8 @@ initialize_camera(cam)
 module = initialize_robot()
 
 # Set move speed
-speedX = 25
-speedY = 25
+speedX = 80
+speedY = 80
 api.setSpeed(speedX, speedY, module)
 
 # Set accuracy
@@ -70,7 +70,7 @@ for i in range(100):
             t = outp.numpy()[0] * 90
         # t = [t[0] + dt[0], t[1] + dt[1]]
         t0 = [api.getPos('X', module), api.getPos('Y', module)]
-        k = 0.9
+        k = 0.4
 
         target = k * (t - t0) + t0
         api.setPos(max(-90, min(90, target[0])), max(-90, min(90, target[1])), module)
@@ -106,7 +106,7 @@ print('Collected data:')
 print(runs)
 
 df = pd.DataFrame(runs)
-df.to_csv('performance6-k09.csv', index=False, header=False)
+df.to_csv('performance.csv', index=False, header=False)
 
 print('Terminating')
 api.terminate()
